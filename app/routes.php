@@ -12,34 +12,39 @@ use Slim\Interfaces\RouteCollectorProxyInterface as Group;
 return function (App $app) {
     // Table Customer
     // get, GetAllCustomer
-    $app->get('/customers', function (Request $request, Response $response) {
-        $db = $this->get(PDO::class);
-    
+    // get, GetAllCustomer
+$app->get('/customers', function (Request $request, Response $response) {
+    $db = $this->get(PDO::class);
+
+    try {
         $stmt = $db->prepare('CALL GetAllCustomer()');
         $stmt->execute();
-    
         $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
         $response->getBody()->write(json_encode($results));
-    
-        return $response->withHeader('Content-Type', 'application/json');
-    });
+    } catch (PDOException $e) {
+        $response = $response->withStatus(500);
+        $response->getBody()->write(json_encode(['message' => 'Database error: ' . $e->getMessage()]));
+    }
+
+    return $response->withHeader('Content-Type', 'application/json');
+});
 
     // get, GetCustomerByID
     $app->get('/customer/{id}', function (Request $request, Response $response, $args) {
         $id_customer = $args['id'];
-
         $db = $this->get(PDO::class);
-
-        $stmt = $db->prepare('CALL GetCustomerByID(?)');
-        $stmt->bindParam(1, $id_customer, PDO::PARAM_STR);
-
-        $stmt->execute();
-
-        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        $response->getBody()->write(json_encode($results));
-
+    
+        try {
+            $stmt = $db->prepare('CALL GetCustomerByID(?)');
+            $stmt->bindParam(1, $id_customer, PDO::PARAM_STR);
+            $stmt->execute();
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $response->getBody()->write(json_encode($results));
+        } catch (PDOException $e) {
+            $response = $response->withStatus(500);
+            $response->getBody()->write(json_encode(['message' => 'Database error: ' . $e->getMessage()]));
+        }
+    
         return $response->withHeader('Content-Type', 'application/json');
     });
 
@@ -132,12 +137,15 @@ return function (App $app) {
     $app->get('/films', function (Request $request, Response $response) {
         $db = $this->get(PDO::class);
     
-        $stmt = $db->prepare('CALL GetAllFilm()');
-        $stmt->execute();
-    
-        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
-        $response->getBody()->write(json_encode($results));
+        try {
+            $stmt = $db->prepare('CALL GetAllFilm()');
+            $stmt->execute();
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $response->getBody()->write(json_encode($results));
+        } catch (PDOException $e) {
+            $response = $response->withStatus(500);
+            $response->getBody()->write(json_encode(['message' => 'Database error: ' . $e->getMessage()]));
+        }
     
         return $response->withHeader('Content-Type', 'application/json');
     });
@@ -145,18 +153,19 @@ return function (App $app) {
     // get, GetFilmByID
     $app->get('/film/{id}', function (Request $request, Response $response, $args) {
         $id_film = $args['id'];
-
         $db = $this->get(PDO::class);
-
-        $stmt = $db->prepare('CALL GetFilmByID(?)');
-        $stmt->bindParam(1, $id_film, PDO::PARAM_STR);
-
-        $stmt->execute();
-
-        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        $response->getBody()->write(json_encode($results));
-
+    
+        try {
+            $stmt = $db->prepare('CALL GetFilmByID(?)');
+            $stmt->bindParam(1, $id_film, PDO::PARAM_STR);
+            $stmt->execute();
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $response->getBody()->write(json_encode($results));
+        } catch (PDOException $e) {
+            $response = $response->withStatus(500);
+            $response->getBody()->write(json_encode(['message' => 'Database error: ' . $e->getMessage()]));
+        }
+    
         return $response->withHeader('Content-Type', 'application/json');
     });
 
@@ -248,12 +257,15 @@ return function (App $app) {
     $app->get('/jadwals', function (Request $request, Response $response) {
         $db = $this->get(PDO::class);
     
-        $stmt = $db->prepare('CALL GetAllJadwal()');
-        $stmt->execute();
-    
-        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
-        $response->getBody()->write(json_encode($results));
+        try {
+            $stmt = $db->prepare('CALL GetAllJadwal()');
+            $stmt->execute();
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $response->getBody()->write(json_encode($results));
+        } catch (PDOException $e) {
+            $response = $response->withStatus(500);
+            $response->getBody()->write(json_encode(['message' => 'Database error: ' . $e->getMessage()]));
+        }
     
         return $response->withHeader('Content-Type', 'application/json');
     });
@@ -261,18 +273,19 @@ return function (App $app) {
     // get, GetJadwalByID
     $app->get('/jadwal/{id}', function (Request $request, Response $response, $args) {
         $id_jadwal = $args['id'];
-
         $db = $this->get(PDO::class);
-
-        $stmt = $db->prepare('CALL GetJadwalByID(?)');
-        $stmt->bindParam(1, $id_jadwal, PDO::PARAM_STR);
-
-        $stmt->execute();
-
-        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        $response->getBody()->write(json_encode($results));
-
+    
+        try {
+            $stmt = $db->prepare('CALL GetJadwalByID(?)');
+            $stmt->bindParam(1, $id_jadwal, PDO::PARAM_STR);
+            $stmt->execute();
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $response->getBody()->write(json_encode($results));
+        } catch (PDOException $e) {
+            $response = $response->withStatus(500);
+            $response->getBody()->write(json_encode(['message' => 'Database error: ' . $e->getMessage()]));
+        }
+    
         return $response->withHeader('Content-Type', 'application/json');
     });
 
@@ -367,12 +380,15 @@ try {
     $app->get('/studios', function (Request $request, Response $response) {
         $db = $this->get(PDO::class);
     
-        $stmt = $db->prepare('CALL GetAllStudio()');
-        $stmt->execute();
-    
-        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
-        $response->getBody()->write(json_encode($results));
+        try {
+            $stmt = $db->prepare('CALL GetAllStudio()');
+            $stmt->execute();
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $response->getBody()->write(json_encode($results));
+        } catch (PDOException $e) {
+            $response = $response->withStatus(500);
+            $response->getBody()->write(json_encode(['message' => 'Database error: ' . $e->getMessage()]));
+        }
     
         return $response->withHeader('Content-Type', 'application/json');
     });
@@ -380,18 +396,19 @@ try {
     // get, GetStudioByID
     $app->get('/studio/{id}', function (Request $request, Response $response, $args) {
         $id_studio = $args['id'];
-
         $db = $this->get(PDO::class);
-
-        $stmt = $db->prepare('CALL GetStudioByID(?)');
-        $stmt->bindParam(1, $id_studio, PDO::PARAM_STR);
-
-        $stmt->execute();
-
-        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        $response->getBody()->write(json_encode($results));
-
+    
+        try {
+            $stmt = $db->prepare('CALL GetStudioByID(?)');
+            $stmt->bindParam(1, $id_studio, PDO::PARAM_STR);
+            $stmt->execute();
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $response->getBody()->write(json_encode($results));
+        } catch (PDOException $e) {
+            $response = $response->withStatus(500);
+            $response->getBody()->write(json_encode(['message' => 'Database error: ' . $e->getMessage()]));
+        }
+    
         return $response->withHeader('Content-Type', 'application/json');
     });
 
@@ -488,12 +505,15 @@ try {
     $app->get('/tikets', function (Request $request, Response $response) {
         $db = $this->get(PDO::class);
     
-        $stmt = $db->prepare('CALL GetAllTiket()');
-        $stmt->execute();
-    
-        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
-        $response->getBody()->write(json_encode($results));
+        try {
+            $stmt = $db->prepare('CALL GetAllTiket()');
+            $stmt->execute();
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $response->getBody()->write(json_encode($results));
+        } catch (PDOException $e) {
+            $response = $response->withStatus(500);
+            $response->getBody()->write(json_encode(['message' => 'Database error: ' . $e->getMessage()]));
+        }
     
         return $response->withHeader('Content-Type', 'application/json');
     });
@@ -501,18 +521,19 @@ try {
     // get, GetTiketByID
     $app->get('/tiket/{id}', function (Request $request, Response $response, $args) {
         $kode_tiket = $args['id'];
-
         $db = $this->get(PDO::class);
-
-        $stmt = $db->prepare('CALL GetTiketByID(?)');
-        $stmt->bindParam(1, $kode_tiket, PDO::PARAM_STR);
-
-        $stmt->execute();
-
-        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        $response->getBody()->write(json_encode($results));
-
+    
+        try {
+            $stmt = $db->prepare('CALL GetTiketByID(?)');
+            $stmt->bindParam(1, $kode_tiket, PDO::PARAM_STR);
+            $stmt->execute();
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $response->getBody()->write(json_encode($results));
+        } catch (PDOException $e) {
+            $response = $response->withStatus(500);
+            $response->getBody()-> write(json_encode(['message' => 'Database error: ' . $e->getMessage()]));
+        }
+    
         return $response->withHeader('Content-Type', 'application/json');
     });
 
