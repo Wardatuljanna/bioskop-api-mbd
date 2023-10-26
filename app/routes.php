@@ -12,7 +12,6 @@ use Slim\Interfaces\RouteCollectorProxyInterface as Group;
 return function (App $app) {
     // Table Customer
     // get, GetAllCustomer
-    // get, GetAllCustomer
 $app->get('/customers', function (Request $request, Response $response) {
     $db = $this->get(PDO::class);
 
