@@ -50,16 +50,20 @@ return function (App $app) {
         $nama = $parsedBody["nama"];
         $db = $this->get(PDO::class);
     
-
-        $query = $db->prepare('CALL AddCustomer(?, ?)');
-        $query->bindParam(1, $id_customer, PDO::PARAM_INT);
-        $query->bindParam(2, $nama, PDO::PARAM_STR);
-        $query->execute();
-
-        $results = $query->fetchAll(PDO::FETCH_ASSOC);
-
-        $response->getBody()->write(json_encode(['message' => 'Customer berhasil ditambahkan!']));
-
+        try {
+            $query = $db->prepare('CALL AddCustomer(?, ?)');
+            $query->bindParam(1, $id_customer, PDO::PARAM_INT);
+            $query->bindParam(2, $nama, PDO::PARAM_STR);
+            $query->execute();
+    
+            $results = $query->fetchAll(PDO::FETCH_ASSOC);
+    
+            $response->getBody()->write(json_encode(['message' => 'Customer berhasil ditambahkan!']));
+        } catch (PDOException $e) {
+            $response = $response->withStatus(500);
+            $response->getBody()->write(json_encode(['message' => 'Database error ' . $e->getMessage()]));
+        }
+    
         return $response->withHeader('Content-Type', 'application/json');
     });
 
@@ -70,17 +74,21 @@ return function (App $app) {
         $id_customer = $args['id'];
         $nama = $parsedBody["nama"];
         $db = $this->get(PDO::class);
-
-        $query = $db->prepare('CALL UpdateCustomer(?, ?)');
-        $query->bindParam(1, $id_customer, PDO::PARAM_STR);
-        $query->bindParam(2, $nama, PDO::PARAM_STR);
-
-        $response->getBody()->write(json_encode(
-            [
+        
+        try {
+            $query = $db->prepare('CALL UpdateCustomer(?, ?)');
+            $query->bindParam(1, $id_customer, PDO::PARAM_STR);
+            $query->bindParam(2, $nama, PDO::PARAM_STR);
+            $query->execute();
+    
+            $response->getBody()->write(json_encode([
                 'message' => 'Customer dengan id ' . $id_customer . ' telah diupdate dengan nama ' . $nama
-            ]
-        ));
-
+            ]));
+        } catch (PDOException $e) {
+            $response = $response->withStatus(500);
+            $response->getBody()->write(json_encode(['message' => 'Database error ' . $e->getMessage()]));
+        }
+    
         return $response->withHeader("Content-Type", "application/json");
     });
 
@@ -159,38 +167,45 @@ return function (App $app) {
         $judul = $parsedBody["judul"];
         $db = $this->get(PDO::class);
     
-
-        $query = $db->prepare('CALL AddFilm(?, ?)');
-        $query->bindParam(1, $id_film, PDO::PARAM_STR);
-        $query->bindParam(2, $judul, PDO::PARAM_STR);
-        $query->execute();
-
-        $results = $query->fetchAll(PDO::FETCH_ASSOC);
-
-        $response->getBody()->write(json_encode(['message' => 'Film berhasil ditambahkan!']));
-
+        try {
+            $query = $db->prepare('CALL AddFilm(?, ?)');
+            $query->bindParam(1, $id_film, PDO::PARAM_STR);
+            $query->bindParam(2, $judul, PDO::PARAM_STR);
+            $query->execute();
+    
+            $results = $query->fetchAll(PDO::FETCH_ASSOC);
+    
+            $response->getBody()->write(json_encode(['message' => 'Film berhasil ditambahkan!']));
+        } catch (PDOException $e) {
+            $response = $response->withStatus(500);
+            $response->getBody()->write(json_encode(['message' => 'Database error ' . $e->getMessage()]));
+        }
+    
         return $response->withHeader('Content-Type', 'application/json');
     });
 
-    // put, UpdateFilm
+    // PUT, UpdateFilm
     $app->put('/film/{id}', function (Request $request, Response $response, $args) {
         $parsedBody = $request->getParsedBody();
-
-        $id_film = $args['id'];
-        $judul = $parsedBody["judul"];
+        $id_film = $args['id']; 
+        $judul = $parsedBody["judul"]; 
         $db = $this->get(PDO::class);
-
-        $query = $db->prepare('CALL UpdateFilm(?, ?)');
-        $query->bindParam(1, $id_film, PDO::PARAM_STR);
-        $query->bindParam(2, $judul, PDO::PARAM_STR);
-
-        $response->getBody()->write(json_encode(
-            [
+        
+        try {
+            $query = $db->prepare('CALL UpdateFilm(?, ?)');
+            $query->bindParam(1, $id_film, PDO::PARAM_STR);
+            $query->bindParam(2, $judul, PDO::PARAM_STR);
+            $query->execute();
+        
+            $response->getBody()->write(json_encode([
                 'message' => 'Film dengan id ' . $id_film . ' telah diupdate dengan judul ' . $judul
-            ]
-        ));
-
-        return $response->withHeader("Content-Type", "application/json");
+            ]));
+        } catch (PDOException $e) {
+            $response = $response->withStatus(500);
+            $response->getBody()->write(json_encode(['message' => 'Database error ' . $e->getMessage()]));
+        }
+        
+        return $response->withHeader('Content-Type', 'application/json');
     });
 
     // delete, DeleteFilm
@@ -269,7 +284,7 @@ return function (App $app) {
         $jadwal = $parsedBody["jadwal"];
         $db = $this->get(PDO::class);
     
-
+try {
         $query = $db->prepare('CALL AddJadwal(?, ?, ?)');
         $query->bindParam(1, $id_jadwal, PDO::PARAM_STR);
         $query->bindParam(2, $id_film, PDO::PARAM_STR);
@@ -279,9 +294,13 @@ return function (App $app) {
         $results = $query->fetchAll(PDO::FETCH_ASSOC);
 
         $response->getBody()->write(json_encode(['message' => 'Jadwal berhasil ditambahkan!']));
+    } catch (PDOException $e) {
+        $response = $response->withStatus(500);
+        $response->getBody()->write(json_encode(['message' => 'Database error ' . $e->getMessage()]));
+    }
 
-        return $response->withHeader('Content-Type', 'application/json');
-    });
+    return $response->withHeader('Content-Type', 'application/json');
+});
 
     // put, UpdateJadwal
     $app->put('/jadwal/{id}', function (Request $request, Response $response, $args) {
@@ -291,16 +310,20 @@ return function (App $app) {
         $jadwal = $parsedBody["jadwal"];
         $db = $this->get(PDO::class);
 
-        $query = $db->prepare('CALL UpdateJadwal(?, ?)');
-        $query->bindParam(1, $id_jadwal, PDO::PARAM_STR);
-        $query->bindParam(2, $jadwal, PDO::PARAM_STR);
-
-        $response->getBody()->write(json_encode(
-            [
+        try {
+            $query = $db->prepare('CALL UpdateJadwal(?, ?)');
+            $query->bindParam(1, $id_jadwal, PDO::PARAM_STR);
+            $query->bindParam(2, $jadwal, PDO::PARAM_STR);
+            $query->execute();
+    
+            $response->getBody()->write(json_encode([
                 'message' => 'Jadwal dengan id ' . $id_jadwal . ' telah diupdate dengan jadwal ' . $jadwal
-            ]
-        ));
-
+            ]));
+        } catch (PDOException $e) {
+            $response = $response->withStatus(500);
+            $response->getBody()->write(json_encode(['message' => 'Database error ' . $e->getMessage()]));
+        }
+    
         return $response->withHeader("Content-Type", "application/json");
     });
 
@@ -380,7 +403,7 @@ return function (App $app) {
         $kota = $parsedBody["kota"];
         $db = $this->get(PDO::class);
     
-
+try {
         $query = $db->prepare('CALL AddStudio(?, ?, ?)');
         $query->bindParam(1, $id_studio, PDO::PARAM_STR);
         $query->bindParam(2, $no_studio, PDO::PARAM_STR);
@@ -390,9 +413,13 @@ return function (App $app) {
         $results = $query->fetchAll(PDO::FETCH_ASSOC);
 
         $response->getBody()->write(json_encode(['message' => 'Studio berhasil ditambahkan!']));
+    } catch (PDOException $e) {
+        $response = $response->withStatus(500);
+        $response->getBody()->write(json_encode(['message' => 'Database error ' . $e->getMessage()]));
+    }
 
-        return $response->withHeader('Content-Type', 'application/json');
-    });
+    return $response->withHeader('Content-Type', 'application/json');
+});
 
     // put, UpdateStudio
     $app->put('/studio/{id}', function (Request $request, Response $response, $args) {
@@ -403,17 +430,21 @@ return function (App $app) {
         $kota = $parsedBody["kota"];
         $db = $this->get(PDO::class);
 
-        $query = $db->prepare('CALL UpdateFilm(?, ?, ?)');
-        $query->bindParam(1, $id_studio, PDO::PARAM_STR);
-        $query->bindParam(2, $no_studio, PDO::PARAM_STR);
-        $query->bindParam(3, $kota, PDO::PARAM_STR);
-
-        $response->getBody()->write(json_encode(
-            [
-                'message' => 'Studio dengan id ' . $id_studio . ' telah diupdate dengan nomor studio ' . $no_studio 
-            ]
-        ));
-
+        try {
+            $query = $db->prepare('CALL UpdateStudio(?, ?, ?)');
+            $query->bindParam(1, $id_studio, PDO::PARAM_STR);
+            $query->bindParam(2, $no_studio, PDO::PARAM_STR);
+            $query->bindParam(3, $kota, PDO::PARAM_STR);
+            $query->execute();
+    
+            $response->getBody()->write(json_encode([
+                'message' => 'Studio dengan id ' . $id_studio . ' telah diupdate dengan nomor studio ' . $no_studio
+            ]));
+        } catch (PDOException $e) {
+            $response = $response->withStatus(500);
+            $response->getBody()->write(json_encode(['message' => 'Database error ' . $e->getMessage()]));
+        }
+    
         return $response->withHeader("Content-Type", "application/json");
     });
 
@@ -498,7 +529,7 @@ return function (App $app) {
         $no_kursi = $parsedBody["no_kursi"];
         $db = $this->get(PDO::class);
     
-
+try {
         $query = $db->prepare('CALL AddTiket(?, ?, ?, ?, ?, ?, ?, ?)');
         $query->bindParam(1, $kode_tiket, PDO::PARAM_STR);
         $query->bindParam(2, $id_customer, PDO::PARAM_STR);
@@ -513,9 +544,13 @@ return function (App $app) {
         $results = $query->fetchAll(PDO::FETCH_ASSOC);
 
         $response->getBody()->write(json_encode(['message' => 'Tiket berhasil ditambahkan!']));
+    } catch (PDOException $e) {
+        $response = $response->withStatus(500);
+        $response->getBody()->write(json_encode(['message' => 'Database error ' . $e->getMessage()]));
+    }
 
-        return $response->withHeader('Content-Type', 'application/json');
-    });
+    return $response->withHeader('Content-Type', 'application/json');
+});
 
     // put, UpdateTiket
     $app->put('/tiket/{id}', function (Request $request, Response $response, $args) {
@@ -526,17 +561,21 @@ return function (App $app) {
         $no_kursi = $parsedBody["no_kursi"];
         $db = $this->get(PDO::class);
 
-        $query = $db->prepare('CALL UpdateTiket(?, ?)');
-        $query->bindParam(1, $kode_tiket, PDO::PARAM_STR);
-        $query->bindParam(2, $harga, PDO::PARAM_INT);
-        $query->bindParam(3, $no_kursi, PDO::PARAM_STR);
-
-        $response->getBody()->write(json_encode(
-            [
-                'message' => 'Tiket dengan id ' . $kode_tiket . ' telah diupdate dengan harga ' . $harga 
-            ]
-        ));
-
+        try {
+            $query = $db->prepare('CALL UpdateTiket(?, ?, ?)');
+            $query->bindParam(1, $kode_tiket, PDO::PARAM_STR);
+            $query->bindParam(2, $harga, PDO::PARAM_INT);
+            $query->bindParam(3, $no_kursi, PDO::PARAM_STR);
+            $query->execute();
+    
+            $response->getBody()->write(json_encode([
+                'message' => 'Tiket dengan id ' . $kode_tiket . ' telah diupdate dengan harga ' . $harga
+            ]));
+        } catch (PDOException $e) {
+            $response = $response->withStatus(500);
+            $response->getBody()->write(json_encode(['message' => 'Database error ' . $e->getMessage()]));
+        }
+    
         return $response->withHeader("Content-Type", "application/json");
     });
 
