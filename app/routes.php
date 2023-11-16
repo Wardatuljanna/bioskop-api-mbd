@@ -506,8 +506,8 @@ $app->put('/studio/{id}', function (Request $request, Response $response, $args)
 
     // Validate input
     if (!isset($parsedBody["no_studio"]) || !isset($parsedBody["kota"])) {
-        $response = $response->withStatus(400); // Bad Request
-        $response->getBody()->write(json_encode(['message' => 'Missing required attributes: no_studio, kota']));
+        $response = $response->withStatus(400); 
+        $response->getBody()->write(json_encode(['message' => 'atribut tidak sesuai']));
         return $response->withHeader('Content-Type', 'application/json');
     }
 
@@ -524,7 +524,7 @@ $app->put('/studio/{id}', function (Request $request, Response $response, $args)
         $query->execute();
 
         if ($query->rowCount() === 0) {
-            $response = $response->withStatus(404); // Not Found
+            $response = $response->withStatus(404); 
             $response->getBody()->write(json_encode(['message' => 'Studio dengan ID ' . $id_studio . ' tidak ditemukan']));
         } else {
             $response->getBody()->write(json_encode([
@@ -662,8 +662,8 @@ $app->put('/tiket/{id}', function (Request $request, Response $response, $args) 
     $requiredAttributes = ["harga", "no_kursi"];
     foreach ($requiredAttributes as $attribute) {
         if (!isset($parsedBody[$attribute])) {
-            $response = $response->withStatus(400); // Bad Request
-            $response->getBody()->write(json_encode(['message' => 'Missing required attribute: ' . $attribute]));
+            $response = $response->withStatus(400); 
+            $response->getBody()->write(json_encode(['message' => 'atribut tidak sesuai']));
             return $response->withHeader('Content-Type', 'application/json');
         }
     }
@@ -681,7 +681,7 @@ $app->put('/tiket/{id}', function (Request $request, Response $response, $args) 
         $query->execute();
 
         if ($query->rowCount() === 0) {
-            $response = $response->withStatus(404); // Not Found
+            $response = $response->withStatus(404); 
             $response->getBody()->write(json_encode(['message' => 'Tiket dengan ID ' . $id_tiket . ' tidak ditemukan']));
         } else {
             $response->getBody()->write(json_encode([
